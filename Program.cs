@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using skill_up.Context;
 using skill_up.Models;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -41,6 +42,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 });
 
+builder.Services.AddCors(options => { options.AddPolicy(MyAllowSpecificOrigins, policy => { policy.WithOrigins("*") .AllowAnyHeader() .AllowAnyMethod(); }); });
+ 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,6 +55,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles(); 
+app.UseStaticFiles(); 
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
